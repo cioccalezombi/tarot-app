@@ -1,26 +1,69 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap");
 @import "tailwindcss";
 
+/* ── CSS Variables ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #08080f;
+  --foreground: #e2e0f0;
+  --color-mystic-bg: #08080f;
+  --color-gold: #f59e0b;
+  --color-gold-light: #fbbf24;
+  --color-violet: #7c3aed;
 }
 
+/* ── Theme tokens ──────────────────────────────────────────── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-cinzel: "Cinzel", serif;
+  --font-lato: "Lato", sans-serif;
+  --font-sans: "Lato", sans-serif;
+  --font-mono: ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Utility classes ───────────────────────────────────────── */
+.font-cinzel {
+  font-family: "Cinzel", serif;
+}
+
+.bg-mystic {
+  background-color: #08080f;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(88, 28, 135, 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(30, 27, 75, 0.4) 0%, transparent 60%);
+}
+
+/* ── Base styles ───────────────────────────────────────────── */
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Lato", Arial, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #08080f;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.5);
+}
+
+/* ── Text selection ────────────────────────────────────────── */
+::selection {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde68a;
 }
