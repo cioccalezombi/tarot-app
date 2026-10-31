@@ -12,19 +12,13 @@ interface SpreadLayoutProps {
 
 export default function SpreadLayout({ cards, onAllFlipped }: SpreadLayoutProps) {
   const [flippedCount, setFlippedCount] = useState(0);
-  const [manuallyFlipped, setManuallyFlipped] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
+  const [flipped, setFlipped] = useState<boolean[]>([false, false, false]);
 
-  // Auto-flip cards one by one with delay
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
-
     cards.forEach((_, index) => {
       const timer = setTimeout(() => {
-        setManuallyFlipped((prev) => {
+        setFlipped((prev) => {
           const next = [...prev];
           next[index] = true;
           return next;
@@ -32,85 +26,76 @@ export default function SpreadLayout({ cards, onAllFlipped }: SpreadLayoutProps)
         setFlippedCount((prev) => {
           const newCount = prev + 1;
           if (newCount === cards.length) {
-            // Small delay before triggering the reading request
-            setTimeout(onAllFlipped, 600);
+            setTimeout(onAllFlipped, 700);
           }
           return newCount;
         });
-      }, 800 + index * 600);
+      }, 900 + index * 700);
       timers.push(timer);
     });
-
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleManualFlip = (index: number) => {
-    if (manuallyFlipped[index]) return; // already flipped
-    setManuallyFlipped((prev) => {
+    if (flipped[index]) return;
+    setFlipped((prev) => {
       const next = [...prev];
       next[index] = true;
       return next;
     });
     setFlippedCount((prev) => {
       const newCount = prev + 1;
-      if (newCount === cards.length) {
-        setTimeout(onAllFlipped, 600);
-      }
+      if (newCount === cards.length) setTimeout(onAllFlipped, 700);
       return newCount;
     });
   };
 
   return (
-    <motion.div
-      className="flex flex-col items-center gap-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      {/* Tirada label */}
-      <div className="flex items-center gap-3">
-        <div className="h-px w-12 bg-amber-500/30" />
-        <span className="text-amber-400/60 text-xs uppercase tracking-[0.3em] font-cinzel">
+    <div className="w-full flex flex-col items-center gap-2">
+      {/* Label con fade-in puro, sin movimiento vertical */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7 }}
+        className="flex items-center gap-3 mb-1"
+      >
+        <div className="h-px w-16 opacity-60" style={{ background: "linear-gradient(90deg, transparent, #c9963a)" }} />
+        <span className="font-cinzel text-xs tracking-[0.3em] uppercase text-amber-400/80">
           Tirada de Tres Cartas
         </span>
-        <div className="h-px w-12 bg-amber-500/30" />
-      </div>
+        <div className="h-px w-16 opacity-60" style={{ background: "linear-gradient(270deg, transparent, #c9963a)" }} />
+      </motion.div>
 
-      {/* Cards row */}
-      <div className="flex flex-wrap gap-8 justify-center items-start">
+      {/* Fila de cartas */}
+      <div className="flex flex-wrap gap-6 md:gap-10 justify-center items-start">
         {cards.map((drawn, index) => (
           <motion.div
             key={drawn.card.id}
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.15,
-              ease: [0.34, 1.56, 0.64, 1],
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: index * 0.12 }}
           >
             <CardFlip
               card={drawn.card}
               isReversed={drawn.isReversed}
               position={drawn.position}
-              isFlipped={manuallyFlipped[index]}
+              isFlipped={flipped[index]}
               onFlip={() => handleManualFlip(index)}
             />
           </motion.div>
         ))}
       </div>
 
-      {/* Progress indicator */}
       {flippedCount < cards.length && (
         <motion.p
-          className="text-purple-400/50 text-xs italic"
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          className="text-amber-400/40 text-xs italic font-cinzel mt-2"
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           Las cartas se están revelando...
         </motion.p>
       )}
-    </motion.div>
+    </div>
   );
 }
